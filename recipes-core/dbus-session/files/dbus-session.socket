@@ -1,0 +1,9 @@
+[Unit]
+Description=D-Bus User Message Bus Socket
+
+[Socket]
+ListenStream=/var/run/dbus/session_bus_socket
+#ExecStartPost=-/bin/systemctl --user set-environment DBUS_SESSION_BUS_ADDRESS=unix:path=/var/run/dbus/session_bus_socket
+
+#[Install]
+#WantedBy=sockets.target

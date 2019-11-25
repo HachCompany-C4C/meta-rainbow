@@ -1,0 +1,22 @@
+diff --git a/board/toradex/colibri_imx7/colibri_imx7.c b/board/toradex/colibri_imx7/colibri_imx7.c
+index dc3998edbc..50294db92c 100644
+--- a/board/toradex/colibri_imx7/colibri_imx7.c
++++ b/board/toradex/colibri_imx7/colibri_imx7.c
+@@ -180,7 +180,7 @@ static int setup_lcd(void)
+ 
+ 	/* Set BL_ON */
+ 	gpio_request(GPIO_BL_ON, "BL_ON");
+-	gpio_direction_output(GPIO_BL_ON, 1);
++	gpio_direction_output(GPIO_BL_ON, 0);
+ 
+ 	/* Set PWM<A> to full brightness (assuming inversed polarity) */
+ 	gpio_request(GPIO_PWM_A, "PWM<A>");
+@@ -195,7 +195,7 @@ static int setup_lcd(void)
+ void board_preboot_os(void)
+ {
+ 	gpio_direction_output(GPIO_PWM_A, 1);
+-	gpio_direction_output(GPIO_BL_ON, 0);
++	gpio_direction_output(GPIO_BL_ON, 1);
+ }
+ #endif
+ 

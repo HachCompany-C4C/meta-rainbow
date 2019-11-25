@@ -1,0 +1,24 @@
+From 977cef716cc68088d22da9e9c40e67688bfa3c1f Mon Sep 17 00:00:00 2001
+From: Tim <xhuang@hach.com>
+Date: Wed, 5 Dec 2018 10:25:35 +0800
+Subject: [PATCH] Add dts in makefile
+
+---
+ arch/arm/boot/dts/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index 2a402da..01cb0cd 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -562,6 +562,7 @@ dtb-$(CONFIG_SOC_IMX7D) += \
+ 	imx7d-sbc-imx7.dtb \
+ 	imx7s-colibri-aster.dtb \
+ 	imx7s-colibri-eval-v3.dtb \
++	imx7d-colibri-emmc-rainbow.dtb \
+ 	imx7s-warp.dtb \
+ 	imx7d-12x12-lpddr3-arm2.dtb \
+ 	imx7d-12x12-lpddr3-arm2-m4.dtb \
+-- 
+2.7.4
+

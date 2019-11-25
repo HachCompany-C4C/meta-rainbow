@@ -1,0 +1,40 @@
+From 7267d793a12ba0c0ba1f827df93c34d0f94833e4 Mon Sep 17 00:00:00 2001
+From: Tim <xhuang@hach.com>
+Date: Mon, 18 Mar 2019 11:29:55 +0800
+Subject: [PATCH] Change uartc for bsp debug, so uarta can be used for 485
+ purpose
+
+---
+ arch/arm/dts/imx7-colibri.dts       | 2 +-
+ include/configs/colibri_imx7_emmc.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/dts/imx7-colibri.dts b/arch/arm/dts/imx7-colibri.dts
+index b19141b..81b280d 100644
+--- a/arch/arm/dts/imx7-colibri.dts
++++ b/arch/arm/dts/imx7-colibri.dts
+@@ -13,7 +13,7 @@
+ 	compatible = "toradex,imx7-colibri", "fsl,imx7";
+ 
+ 	chosen {
+-		stdout-path = &uart1;
++		stdout-path = &uart3;
+ 	};
+ };
+ 
+diff --git a/include/configs/colibri_imx7_emmc.h b/include/configs/colibri_imx7_emmc.h
+index 1b2687b..b8141b9 100644
+--- a/include/configs/colibri_imx7_emmc.h
++++ b/include/configs/colibri_imx7_emmc.h
+@@ -139,7 +139,7 @@
+ 	NFS_BOOTCMD \
+ 	SD_BOOTCMD \
+ 	"boot_file=zImage\0" \
+-	"console=ttymxc0\0" \
++	"console=ttymxc2\0" \
+ 	"defargs=\0" \
+ 	"fdt_board=rainbow\0" \
+ 	"fdt_fixup=;\0" \
+-- 
+2.7.4
+

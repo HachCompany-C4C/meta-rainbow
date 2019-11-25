@@ -1,0 +1,25 @@
+From 4301f80caa005f36e4be26b5eae0fb0eec5ee9b0 Mon Sep 17 00:00:00 2001
+From: Tim <xhuang@hach.com>
+Date: Mon, 26 Nov 2018 13:01:11 +0800
+Subject: [PATCH] Fix lcd backlight pin
+
+---
+ board/toradex/colibri_imx6/colibri_imx6.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/board/toradex/colibri_imx6/colibri_imx6.c b/board/toradex/colibri_imx6/colibri_imx6.c
+index f3181a0..45c48c6 100644
+--- a/board/toradex/colibri_imx6/colibri_imx6.c
++++ b/board/toradex/colibri_imx6/colibri_imx6.c
+@@ -630,7 +630,7 @@ static void setup_display(void)
+ 					 ARRAY_SIZE(backlight_pads));
+ 	/* use 0 for EDT 7", use 1 for LG fullHD panel */
+ 	gpio_direction_output(RGB_BACKLIGHTPWM_GP, 0);
+-	gpio_direction_output(RGB_BACKLIGHT_GP, 1);
++	gpio_direction_output(RGB_BACKLIGHT_GP, 0);
+ }
+ 
+ /*
+-- 
+2.7.4
+

@@ -1,0 +1,22 @@
+diff --git a/include/configs/colibri_imx6.h b/include/configs/colibri_imx6.h
+index fda171bd9e..52a98d7770 100644
+--- a/include/configs/colibri_imx6.h
++++ b/include/configs/colibri_imx6.h
+@@ -235,7 +235,7 @@
+ 	"usbdtbload=setenv dtbparam; load usb 0:1 ${fdt_addr_r} " \
+ 		"${fdt_file} && setenv dtbparam \" - ${fdt_addr_r}\" && true\0"
+ 
+-#define FDT_FILE "imx6dl-colibri-eval-v3.dtb"
++#define FDT_FILE "imx6dl-colibri-rainbow.dtb"
+ #define CONFIG_EXTRA_ENV_SETTINGS \
+ 	BOOTENV \
+ 	"boot_file=zImage\0" \
+@@ -245,6 +245,8 @@
+ 	EMMC_BOOTCMD \
+ 	"fdt_file=" FDT_FILE "\0" \
+ 	"fdt_fixup=;\0" \
++	"board=colibri_imx6_rainbow\0" \
++	"board_name=colibri_imx6_rainbow\0" \
+ 	MEM_LAYOUT_ENV_SETTINGS \
+ 	NFS_BOOTCMD \
+ 	SD_BOOTCMD \

@@ -1,0 +1,402 @@
+/*
+ * Copyright 2014-2015 Toradex AG
+ * Copyright 2012 Freescale Semiconductor, Inc.
+ * Copyright 2011 Linaro Ltd.
+ *
+ * The code contained herein is licensed under the GNU General Public
+ * License. You may obtain a copy of the GNU General Public License
+ * Version 2 or later at the following locations:
+ *
+ * http://www.opensource.org/licenses/gpl-license.html
+ * http://www.gnu.org/copyleft/gpl.html
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include "imx6dl.dtsi"
+#include "imx6qdl-colibri.dtsi"
+
+/* Add the following define if you connect a Fusion display with a capacitive
+   touch controller */
+/* #define PCAP */
+
+/ {
+	model = "Toradex Colibri iMX6DL/S on Rainbow Carrier Board Beta";
+	compatible = "toradex,colibri_imx6dl-eval", "toradex,colibri_imx6dl", "fsl,imx6dl";
+
+	aliases {
+		i2c0 = &i2cddc;
+		i2c1 = &i2c2;
+		i2c2 = &i2c3;
+	};
+
+	aliases {
+		rtc0 = &pcf8563;
+		rtc1 = "/soc/aips-bus@02000000/snvs@020cc000/snvs-rtc-lp@34";
+	};
+
+	aliases {
+		/* the following, together with kernel patches, forces a fixed assignment
+		   between device id and usdhc controller */
+		/* i.e. the eMMC on usdhc3 will be /dev/mmcblk0 */
+		mmc0 = &usdhc3; /* eMMC */
+		mmc1 = &usdhc1; /* MMC 4bit slot */
+	};
+	
+    clocks {
+		/* fixed crystal dedicated to mpc258x */
+		clk16m: clk@1 {
+			compatible = "fixed-clock";
+			reg=<1>;
+			#clock-cells = <0>;
+			clock-frequency = <16000000>;
+			clock-output-names = "clk16m";
+		};
+	};
+
+	extcon_usbc_det: usbc_det {
+		compatible = "linux,extcon-usb-gpio";
+		debounce = <25>;
+		id-gpio = <&gpio7 12 GPIO_ACTIVE_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_usbc_det_1>;
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_gpio_keys>;
+
+		wakeup {
+			label = "Wake-Up";
+			gpios = <&gpio2 22 GPIO_ACTIVE_HIGH>;
+			linux,code = <KEY_WAKEUP>;
+			debounce-interval = <10>;
+			gpio-key,wakeup;
+		};
+	};
+
+    leds {
+        compatible = "gpio-leds";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_gpio_leds>;
+
+        led2: panel_green {
+            label = "panel_green";
+            gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
+            default-state = "on";
+            linux,default-trigger = "default-on";
+        };
+
+        led3: panel_red {
+            label = "panel_red";
+            gpios = <&gpio2 24 GPIO_ACTIVE_LOW>;
+            default-state = "off";
+            linux,default-trigger = "";
+        };
+
+        led4: heartbeat {
+            label = "heartbeat";
+            gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+            default-state = "off";
+            linux,default-trigger = "heartbeat";
+        };
+
+        led5: disk_io {
+            label = "disk_io";
+            gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
+            default-state = "off";
+            linux,default-trigger = "disk-activity";
+        };
+
+        led6: can_io {
+            label = "can_io";
+            gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
+            default-state = "off";
+            linux,default-trigger = "can1";
+        };
+
+        led7: timer_io {
+            label = "timer_io";
+            gpios = <&gpio3 10 GPIO_ACTIVE_HIGH>;
+            default-state = "off";
+            linux,default-trigger = "timer";
+        };
+
+        led8: buzzer {
+            label = "buzzer";
+            gpios = <&gpio2 23 GPIO_ACTIVE_LOW>;
+            default-state = "off";
+            linux,default-trigger = "";
+        };
+
+    };
+
+	regulators {
+		reg_usb_host_vbus: usb_host_vbus {
+			status = "okay";
+		};
+	};
+};
+
+&backlight {
+#if 0 /* PWM polarity: if 1 is brightest */
+	pwms = <&pwm3 0 5000000 0>;
+#if 0 /* Fusion 7 needs 10kHz PWM frequency */
+	pwms = <&pwm3 0 100000 0>;
+#endif
+#else /* PWM polarity: if 0 is brightest */
+	pwms = <&pwm3 0 5000000 1>;
+#endif
+	enable-gpios = <&gpio3 26 GPIO_ACTIVE_LOW>;
+	brightness-levels = <0 4 8 16 32 64 128 255>;
+	default-brightness-level = <6>;
+	status = "okay";
+};
+
+
+/* Colibri SDDIMM 186/184 */
+&can1 {
+	status = "okay";
+};
+
+/*Colibri SDDIMM 188/178*/
+&can2 {
+	status = "okay";
+};
+
+
+
+/* Colibri SPI */
+&ecspi4 {
+	status = "disabled";
+};
+
+&hdmi_audio {
+	status = "disabled";
+};
+
+&hdmi_core {
+	status = "disabled";
+};
+
+&hdmi_video {
+	status = "disabled";
+};
+
+/*
+ * I2C: I2C3_SDA/SCL on SODIMM 194/196 (e.g. RTC on carrier
+ * board)
+ */
+&i2c3 {
+	status = "okay";
+
+    pcf8563: pcf8563@51 {
+        compatible = "nxp,pcf8563";
+        reg = <0x51>;
+    };
+};
+
+/*
+ * DDC_I2C: I2C2_SDA/SCL on extension connector pin 15/16
+ */
+&i2cddc {
+	status = "okay";
+
+	ehdmi: edid@50 {
+		compatible = "fsl,imx6-hdmi-i2c";
+		reg = <0x50>;
+	};
+};
+
+&iomuxc {
+	/*
+	 * Mux all pins which are unused to be GPIOs
+	 * so they are ready for export to user space
+	 */
+	pinctrl-names = "default";
+	pinctrl-0 = <&pinctrl_csi_gpio_1
+	             &pinctrl_gpio_1
+	             &pinctrl_usbh_oc_1 &pinctrl_usbc_id_1>;
+/*
+	pinctrl-0 = <&pinctrl_weim_gpio_1 &pinctrl_weim_gpio_2
+	             &pinctrl_weim_gpio_3 &pinctrl_weim_gpio_4
+	             &pinctrl_weim_gpio_5 &pinctrl_weim_gpio_6
+	             &pinctrl_csi_gpio_1
+	             &pinctrl_gpio_1
+	             &pinctrl_gpio_2
+	             &pinctrl_usbh_oc_1 &pinctrl_usbc_id_1>;
+*/
+	gpio {
+		/*move from imx6qdl-colibri.dtsi*/
+		pinctrl_gpio_1: gpio-1 {
+			fsl,pins = <
+				MX6QDL_PAD_EIM_D27__GPIO3_IO27      PAD_CTRL_HYS_PU
+				MX6QDL_PAD_NANDF_D6__GPIO2_IO06     PAD_CTRL_HYS_PU
+				MX6QDL_PAD_NANDF_D3__GPIO2_IO03     PAD_CTRL_HYS_PU
+				MX6QDL_PAD_ENET_REF_CLK__GPIO1_IO23 PAD_CTRL_HYS_PU
+				MX6QDL_PAD_DI0_PIN4__GPIO4_IO20     PAD_CTRL_HYS_PU
+				MX6QDL_PAD_SD4_DAT3__GPIO2_IO11     PAD_CTRL_HYS_PU
+				MX6QDL_PAD_NANDF_D4__GPIO2_IO04     PAD_CTRL_HYS_PU
+				MX6QDL_PAD_SD4_DAT0__GPIO2_IO08     PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_D19__GPIO3_IO19      PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_D23__GPIO3_IO23      PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA2__GPIO3_IO02      PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA8__GPIO3_IO08      PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA11__GPIO3_IO11     PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA3__GPIO3_IO03      PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA12__GPIO3_IO12     PAD_CTRL_HYS_PU
+                MX6QDL_PAD_EIM_DA7__GPIO3_IO07      PAD_CTRL_HYS_PU
+			>;
+		};
+
+		pinctrl_pcap_1: pcap-1 {
+			fsl,pins = <
+				MX6QDL_PAD_GPIO_9__GPIO1_IO09	PAD_CTRL_HYS_PD /* SODIMM 28 */
+				MX6QDL_PAD_SD4_DAT2__GPIO2_IO10	PAD_CTRL_HYS_PD /* SODIMM 30 */
+			>;
+		};
+
+        pinctrl_gpio_leds: gpioleds {
+            fsl,pins = <
+                MX6QDL_PAD_EIM_CS1__GPIO2_IO24	PAD_CTRL_HYS_PD /* SODIMM 107 */
+                MX6QDL_PAD_SD2_DAT1__GPIO1_IO14	PAD_CTRL_HYS_PD /* SODIMM 106 */
+                MX6QDL_PAD_EIM_DA0__GPIO3_IO00  PAD_CTRL_HYS_PD
+                MX6QDL_PAD_EIM_DA9__GPIO3_IO09  PAD_CTRL_HYS_PD
+                MX6QDL_PAD_EIM_DA1__GPIO3_IO01  PAD_CTRL_HYS_PD
+                MX6QDL_PAD_EIM_DA10__GPIO3_IO10 PAD_CTRL_HYS_PD
+                MX6QDL_PAD_EIM_CS0__GPIO2_IO23  PAD_CTRL_HYS_PD
+            >;
+        };
+
+	};
+    
+    flexcan1 {
+        pinctrl_flexcan1: flexcan1grp {
+            fsl,pins = <
+                MX6QDL_PAD_KEY_COL2__FLEXCAN1_TX   PAD_CTRL_HYS_PU
+                MX6QDL_PAD_KEY_ROW2__FLEXCAN1_RX   PAD_CTRL_HYS_PU
+            >;
+        };
+    };
+
+    /*move from imx6qdl-colibri.dtsi*/
+	uart1 {
+		pinctrl_uart1_dte: uart1-dtegrp { /* DTE mode */
+			fsl,pins = <
+				MX6QDL_PAD_CSI0_DAT10__UART1_RX_DATA 0x1b0b1
+				MX6QDL_PAD_CSI0_DAT11__UART1_TX_DATA 0x1b0b1
+			>;
+		};
+	};
+
+    uart4 {
+        pinctrl_uart4_dte: uart4grp-dte { /* DTE mode */
+            fsl,pins = <
+                MX6QDL_PAD_CSI0_DAT12__UART4_RX_DATA    0x1b0b1
+                MX6QDL_PAD_CSI0_DAT13__UART4_TX_DATA    0x1b0b1
+                MX6QDL_PAD_CSI0_DAT16__UART4_CTS_B      0x1b0b1
+                MX6QDL_PAD_CSI0_DAT17__UART4_RTS_B      0x1b0b1
+            >;
+        };
+    };
+
+    uart5 {
+        pinctrl_uart5_dte: uart5grp-dte { /* DTE mode */
+            fsl,pins = <
+                MX6QDL_PAD_CSI0_DAT14__UART5_RX_DATA    0x1b0b1
+                MX6QDL_PAD_CSI0_DAT15__UART5_TX_DATA    0x1b0b1
+                MX6QDL_PAD_CSI0_DAT18__UART5_CTS_B      0x1b0b1
+                MX6QDL_PAD_CSI0_DAT19__UART5_RTS_B      0x1b0b1
+            >;
+        };
+    };
+
+	/delete-node/ weim;  /*move from imx6qdl-colibri.dtsi*/
+};
+
+&lcd {
+	status = "okay";
+};
+
+&mxcfb1 {
+	status = "okay";
+};
+
+&mxcfb2 {
+	status = "okay";
+};
+
+#ifndef PCAP
+&pwm1 {
+	status = "okay";
+};
+#endif
+
+&pwm2 {
+	status = "okay";
+};
+
+&pwm3 {
+	status = "okay";
+};
+
+#ifndef PCAP
+&pwm4 {
+	status = "okay";
+};
+#endif
+
+&uart1 {  
+	pinctrl-0 = <&pinctrl_uart1_dte>;   
+	/delete-property/ fsl,uart-has-rtscts;  /*move from imx6qdl-colibri.dtsi*/
+	status = "okay";
+};
+
+&uart2 {
+	status = "okay";
+	linux,rs485-enabled-at-boot-time;
+	rs485-rts-active-low;
+    rs485-rx-during-tx;
+};
+
+&uart3 {
+	status = "okay";
+};
+
+&uart4 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_uart4_dte>;
+    fsl,dte-mode;
+    fsl,uart-has-rtscts;
+    linux,rs485-enabled-at-boot-time;
+};
+
+&uart5 {
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_uart5_dte>;
+    fsl,dte-mode;
+    fsl,uart-has-rtscts;
+    linux,rs485-enabled-at-boot-time;
+};
+
+&usbh1 {
+	status = "okay";
+};
+
+&usbotg {
+	status = "okay";
+	extcon = <&extcon_usbc_det>;
+};
+
+/* MMC */
+&usdhc1 {
+	status = "okay";
+};
+
+/delete-node/ &weim; 
+

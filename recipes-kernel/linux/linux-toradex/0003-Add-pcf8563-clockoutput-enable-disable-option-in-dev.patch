@@ -1,0 +1,56 @@
+From 50e4e4ce3aee1de09ac8ffff4ab693d9edf0f487 Mon Sep 17 00:00:00 2001
+From: Tim <xhuang@hach.com>
+Date: Thu, 31 Jan 2019 17:02:25 +0800
+Subject: [PATCH] Add pcf8563 clockoutput enable/disable option in device tree
+
+---
+ Documentation/devicetree/bindings/rtc/pcf8563.txt | 3 +++
+ drivers/rtc/rtc-pcf8563.c                         | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/rtc/pcf8563.txt b/Documentation/devicetree/bindings/rtc/pcf8563.txt
+index 72f6d2c..58a9d0d 100644
+--- a/Documentation/devicetree/bindings/rtc/pcf8563.txt
++++ b/Documentation/devicetree/bindings/rtc/pcf8563.txt
+@@ -9,6 +9,8 @@ Optional property:
+ - #clock-cells: Should be 0.
+ - clock-output-names:
+   overwrite the default clock name "pcf8563-clkout"
++- clock-output-enabled:
++  enable the clock output feature, default disabled
+ 
+ Example:
+ 
+@@ -16,6 +18,7 @@ pcf8563: pcf8563@51 {
+ 	compatible = "nxp,pcf8563";
+ 	reg = <0x51>;
+ 	#clock-cells = <0>;
++	clock-output-enabled;
+ };
+ 
+ device {
+diff --git a/drivers/rtc/rtc-pcf8563.c b/drivers/rtc/rtc-pcf8563.c
+index a4b8b60..d3e995e 100644
+--- a/drivers/rtc/rtc-pcf8563.c
++++ b/drivers/rtc/rtc-pcf8563.c
+@@ -564,6 +564,7 @@ static int pcf8563_probe(struct i2c_client *client,
+ 	int err;
+ 	unsigned char buf;
+ 	unsigned char alm_pending;
++	struct device_node *node = client->dev.of_node;
+ 
+ 	dev_dbg(&client->dev, "%s\n", __func__);
+ 
+@@ -617,7 +618,8 @@ static int pcf8563_probe(struct i2c_client *client,
+ 
+ #ifdef CONFIG_COMMON_CLK
+ 	/* register clk in common clk framework */
+-	pcf8563_clkout_register_clk(pcf8563);
++	if(of_get_property(node, "clock-output-enabled", NULL)) 
++		pcf8563_clkout_register_clk(pcf8563);
+ #endif
+ 
+ 	/* the pcf8563 alarm only supports a minute accuracy */
+-- 
+2.7.4
+

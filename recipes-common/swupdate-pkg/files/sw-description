@@ -1,0 +1,36 @@
+software =
+{
+	version = "0.1.0";
+
+	colibri-imx7-rainbow = {
+		hardware-compatibility: [ "1.0" ];
+
+		files: (
+			{
+				filename = "Packages.tar.gz";
+				path = "/tmp/pkg/Packages.tar.gz";
+				compressed = true;
+				properties = {create-destination = "true";}
+			},
+
+			{
+				filename = "firmware.bin";
+				path = "/tmp/mcu/firmware.bin";
+				properties = {create-destination = "true";}
+			},
+
+			{
+				filename = "update_mcu.py";
+			    path = "/tmp/pkg/update_mcu.py";
+				properties = {create-destination = "true";}
+			}
+		);
+
+			scripts: (
+			{
+				filename = "update.sh";
+				type = "shellscript";
+			}
+		);
+	};
+}

@@ -1,0 +1,64 @@
+{
+    "config_format": 2,
+    "autoinstall": false,
+    "name": "Embedded Linux image for rainbow imx6",
+    "description": "Embedded Linux image for rainbow imx6.",
+    "version": "2.8b4.129",
+    "release_date": "2018-10-05",
+    "u_boot_env": "uEnv.txt",
+    "prepare_script": "prepare.sh",
+    "wrapup_script": "wrapup.sh",
+    "marketing": "marketing.tar",
+    "icon": "toradexlinux.png",
+    "supported_product_ids": [
+        "0014",
+        "0015",
+        "0016",
+        "0017"
+    ],
+    "blockdevs": [
+        {
+            "name": "mmcblk0",
+            "partitions": [
+                {
+                    "partition_size_nominal": 16,
+                    "want_maximised": false,
+                    "content": {
+                        "label": "BOOT",
+                        "filesystem_type": "FAT",
+                        "mkfs_options": "",
+                        "filename": "Colibri-Imx6-Rainbow_Qt-Image.bootfs.tar.xz",
+                        "uncompressed_size": 5.03125
+                    }
+                },
+                {
+                    "partition_size_nominal": 512,
+                    "want_maximised": true,
+                    "content": {
+                        "label": "RFS",
+                        "filesystem_type": "ext4",
+                        "mkfs_options": "-E nodiscard",
+                        "filename": "Colibri-Imx6-Rainbow_Qt-Image.rootfs.tar.xz",
+                        "uncompressed_size": 457.8671875
+                    }
+                }
+            ]
+        },
+        {
+            "name": "mmcblk0boot0",
+            "content": {
+                "filesystem_type": "raw",
+                "rawfiles": [
+                    {
+                        "filename": "SPL",
+                        "dd_options": "seek=2"
+                    },
+                    {
+                        "filename": "u-boot.img",
+                        "dd_options": "seek=138"
+                    }
+                ]
+            }
+        }
+    ]
+}

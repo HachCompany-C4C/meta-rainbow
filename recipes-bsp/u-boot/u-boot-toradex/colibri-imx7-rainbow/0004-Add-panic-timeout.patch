@@ -1,0 +1,13 @@
+diff --git a/include/configs/colibri_imx7_emmc.h b/include/configs/colibri_imx7_emmc.h
+index b8141b9861..e20e0f7020 100644
+--- a/include/configs/colibri_imx7_emmc.h
++++ b/include/configs/colibri_imx7_emmc.h
+@@ -140,7 +140,7 @@
+ 	SD_BOOTCMD \
+ 	"boot_file=zImage\0" \
+ 	"console=ttymxc2\0" \
+-	"defargs=\0" \
++	"defargs=oops=panic panic=10\0" \
+ 	"fdt_board=rainbow\0" \
+ 	"fdt_fixup=;\0" \
+    "board=colibri_imx7_rainbow\0" \
